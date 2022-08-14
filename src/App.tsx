@@ -5,6 +5,7 @@ import { AppRouter } from './components/AppRouter';
 import { Loader } from './components/Loader';
 import { NavBar } from './components/NavBar';
 import { Context } from './utils/Context';
+import firebase from 'firebase/app';
 
 function App() {
 

@@ -11,10 +11,15 @@ export const NavBar = () => {
     const [user] = useAuthState(auth);
 
     return (
-    <header style={{background: 'blue', height: '100px'}}>
-        {
-            user ? <Button onClick={()=> auth.signOut()}>Logout</Button> : <NavLink to={LOGIN_ROUTE}><Button>Login</Button></NavLink>
-        }
+    <header style={{background: 'blue', height: '100px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div style={{ color: 'white'}}>
+            Маленький, пока что групповой чат на firebase
+        </div>
+        <div>
+            {
+                user ? <Button onClick={()=> auth.signOut()}>Logout</Button> : <NavLink to={LOGIN_ROUTE}><Button>Login</Button></NavLink>
+            }
+        </div>
     </header>
     )
 }
