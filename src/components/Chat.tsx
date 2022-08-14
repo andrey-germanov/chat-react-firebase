@@ -53,7 +53,7 @@ export const Chat = () => {
         >
             <span>Показано {`${messages && messages.length >= 60 ? Math.floor(messages.length / 2) : messages?.length}`} сообщения</span>
             {
-                messages ? messages.slice(messages.length / 2, messages.length).map(({id, uid, name, photoURL, text, createdAt})=>{
+                messages ? messages.map(({id, uid, name, photoURL, text, createdAt})=>{
                     return (
                         <div style={{
                             marginTop: '10px',
