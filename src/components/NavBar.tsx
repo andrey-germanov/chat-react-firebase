@@ -11,7 +11,7 @@ export const NavBar = () => {
     const [user] = useAuthState(auth);
 
     return (
-    <header style={{background: 'blue', height: '100px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+    <header style={{background: '#0000ff8a', height: '100px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 10px'}}>
         <div style={{ color: 'white'}}>
             Маленький, пока что групповой чат на firebase
         </div>

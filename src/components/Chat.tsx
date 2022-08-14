@@ -44,25 +44,28 @@ export const Chat = () => {
 
   return (
     <div style={{margin: '0 auto'}}>
-        показано {`${messages && messages.length >= 60 ? Math.floor(messages.length / 2) : messages?.length}`} сообщения
         <div style={{
-                background: 'grey',
-                color: 'blue',
-                height: '500px',
-                overflow: 'scroll',
-            }}
+            background: '#e6e1e1',
+            height: '500px',
+            overflow: 'scroll',
+            padding: '0 10px'
+        }}
         >
+            <span>Показано {`${messages && messages.length >= 60 ? Math.floor(messages.length / 2) : messages?.length}`} сообщения</span>
             {
                 messages ? messages.slice(messages.length / 2, messages.length).map(({id, uid, name, photoURL, text, createdAt})=>{
                     return (
                         <div style={{
                             marginTop: '10px',
                             padding: '10px',
-                            border: '1px solid black',
                             marginLeft: uid === user.uid ? 'auto' : '0',
                             minWidth: 'fit-content',
                             height: '100px',
+                            color: uid === user.uid ? '#ffffffe6' : 'rgb(24 24 24 / 90%)',
                             width: '100px',
+                            background: uid === user.uid ? 'rgb(122 122 234)' : 'rgb(200 200 241)',
+                            borderRadius: '20px',
+                            boxShadow: 'rgb(0 0 0 / 50%) 0px 7px 29px 0px'
                         }}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                                 <img style={{width: '30px', borderRadius: '50%'}} src={photoURL} alt="" />
@@ -77,8 +80,10 @@ export const Chat = () => {
                 <div>write something</div>
             }
         </div>
-        <TextArea value={value} onChange={(e)=>setValue(e.target.value)} />
-        <Button style={{margin: '0 auto', display: 'block', width: '200px'}} type='primary' htmlType='submit' onClick={sendMessage}>Send Message</Button>
+        <div style={{padding: '10px 10px'}}>
+            <TextArea value={value} onChange={(e)=>setValue(e.target.value)} />
+            <Button style={{margin: '10px auto', display: 'block', width: '200px'}} type='primary' htmlType='submit' onClick={sendMessage}>Send Message</Button>
+        </div>
     </div>
   )
 }
