@@ -45,3 +45,18 @@ table {
 *{
 	box-sizing: border-box;
 }
+
+.grid{
+	display: grid;
+	height: 100vh;
+	grid-template-columns: 6fr 6fr 6fr 6fr 6fr 6fr;
+}
+
+.grid div{
+	border: 1px solid black;
+}
+/* .grid span{
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+} */

@@ -5,7 +5,7 @@ import { Context } from '../utils/Context';
 import { Loader } from './Loader';
 import firebase from 'firebase';
 import moment from 'moment';
-import { Button } from 'antd';
+import { Button, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 
 export const Chat = () => {
@@ -23,12 +23,12 @@ export const Chat = () => {
         scrollToBottom();
     }, [messages]);
 
+    
     const sendMessage = async () => {
-        if(value.length === 0) return
-
+        if(value.length <=1) return
         firestore.collection('messages').add({
             uid: user.uid,
-            id: user.uid + '1',
+            // id: user.uid + '1',
             name: user.displayName,
             photoURL: user.photoURL,
             text: value,
@@ -37,13 +37,29 @@ export const Chat = () => {
         setValue('');
         scrollToBottom();
     }
-
+    
     if(loading){
         return <Loader />
     }
+    console.log(value.length)
+    const sendMessageByEnter = (e:any) => {
+        console.log(e.code === 'Enter' && e.shiftKey)
+        if(e.code === 'Enter' && e.shiftKey) {
+            setValue('\n')
+        }
+        if(e.code === 'Enter'){
+            e.preventDefault();
+            sendMessage();
+        }
 
+        // setValue('');
+        // setValue('\n')
+        // console.log(value)
+    }
   return (
-    <div style={{margin: '0 auto'}}>
+    <div style={{margin: '0 auto'}}
+        onKeyPress={sendMessageByEnter}
+    >
         <div style={{
             background: '#e6e1e1',
             height: '500px',
@@ -54,7 +70,7 @@ export const Chat = () => {
         >
             <span>Показано {`${messages && messages.length >= 60 ? Math.floor(messages.length / 2) : messages?.length}`} сообщения</span>
             {
-                messages ? messages.map(({id, uid, name, photoURL, text, createdAt})=>{
+                messages ? messages.map(({uid, name, photoURL, text, createdAt})=>{
                     return (
                         <div style={{
                             margin: '20px',
@@ -81,7 +97,11 @@ export const Chat = () => {
             }
         </div>
         <div style={{padding: '10px', width: '100%'}}>
-            <TextArea value={value} onChange={(e)=>setValue(e.target.value)} />
+            <TextArea
+                value={value}
+                onChange={(e)=>setValue(e.target.value)}
+                rows={2} placeholder="Write something"    
+            />
             <Button style={{margin: '10px auto', display: 'block', width: '200px'}} type='primary' htmlType='submit' onClick={sendMessage}>Send Message</Button>
         </div>
     </div>
