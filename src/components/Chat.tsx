@@ -7,6 +7,7 @@ import firebase from 'firebase';
 import moment from 'moment';
 import { Button, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import meloboom from '../voice notification/meloboom.mp3';
 
 export const Chat = () => {
     const {auth, firestore} = useContext(Context);
@@ -14,6 +15,7 @@ export const Chat = () => {
     const [value, setValue] = useState('');
     const messagesEndRef = useRef<null | HTMLElement>(null);
     const [messages, loading] = useCollectionData(firestore.collection('messages').orderBy('createdAt'));
+    const audioPlayer = useRef<HTMLAudioElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -21,8 +23,12 @@ export const Chat = () => {
 
     useEffect(() => {
         scrollToBottom();
+        playAudio();
     }, [messages]);
-
+    const playAudio = () => {
+        if(!audioPlayer.current) return
+        audioPlayer?.current?.play();
+    }
     
     const sendMessage = async () => {
         if(value.length <=1) return
@@ -68,6 +74,7 @@ export const Chat = () => {
             width: '100%'
         }}
         >
+
             <span>Показано {`${messages && messages.length >= 60 ? Math.floor(messages.length / 2) : messages?.length}`} сообщения</span>
             {
                 messages ? messages.map(({uid, name, photoURL, text, createdAt})=>{
@@ -86,6 +93,7 @@ export const Chat = () => {
                             <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                                 <img style={{width: '30px', borderRadius: '50%'}} src={photoURL} alt="" />
                                 <div>{name}</div>
+                                {uid !== user.uid ? <audio ref={audioPlayer} src={meloboom}/> : null}
                             </div>
                             <span style={{padding: '2px 0', display: 'block'}} ref={text === messages[messages.length - 1].text ? messagesEndRef : null}>{text}</span> 
                             <div>{createdAt && moment(createdAt.seconds*1000).format('LTS')}</div>

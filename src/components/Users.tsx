@@ -13,27 +13,27 @@ export const Users = () => {
     const [chatsSnapshot] = useCollectionData(userChatRef);
 
     console.log(chatsSnapshot)
-    // console.log(users)
+    console.log(users)
 
-    // const createChat = () => {
-    //     if(!foundPerson) return null;
+    const createChat = () => {
+        if(!foundPerson) return null;
 
-    //     if(foundPerson !== user.email && !chatAlreadyExists(foundPerson)){
-    //         firestore.collection('chats').add({
-    //             users: [user.email, foundPerson]
-    //         })
-    //         setFoundPerson('')
-    //     }
-    // }
+        if(foundPerson !== user.email && !chatAlreadyExists(foundPerson)){
+            firestore.collection('chats').add({
+                users: [user.email, foundPerson]
+            })
+            setFoundPerson('')
+        }
+    }
 
-    // const chatAlreadyExists = (recipiendEmail:any) => {
-    //     return !!chatsSnapshot?.docs?.find((chat: any) => chat.data().users.find((user: any) => user === recipiendEmail)?.length > 0)
-    // }
+    const chatAlreadyExists = (recipiendEmail:any) => {
+        return !!chatsSnapshot?.docs?.find((chat: any) => chat.data().users.find((user: any) => user === recipiendEmail)?.length > 0)
+    }
     
-    // console.log(chatsSnapshot?.docs)
+    console.log(chatsSnapshot?.docs)
   return (
     <div>
-        {/* <input type='email' onChange={(e:any)=>setFoundPerson(e.target.value)} />
+        <input type='email' onChange={(e:any)=>setFoundPerson(e.target.value)} />
         <Button onClick={createChat}>Create chat</Button>
         {
             chatsSnapshot && chatsSnapshot?.docs.map(chat=> {
@@ -41,7 +41,7 @@ export const Users = () => {
                     <pre>{JSON.stringify(chat, null, 2)}</pre>
                 </div>
             })
-        } */}
+        }
     </div>
   )
 }

@@ -12,7 +12,6 @@ function App() {
 
   const {auth, firestore} = useContext(Context);
   const [user, loading]: any = useAuthState(auth);
-  const [numbers, setNumbers] = useState<any>('')
   useEffect(() => {
       if(user) {
         firestore.collection('users').doc(user.uid).set({
@@ -32,7 +31,7 @@ function App() {
     <BrowserRouter>
       <NavBar/>
       <AppRouter/>
-      <Users />
+      {/* <Users /> */}
     </BrowserRouter>
   );
 }
