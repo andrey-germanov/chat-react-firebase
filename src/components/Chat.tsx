@@ -25,9 +25,10 @@ export const Chat = () => {
         scrollToBottom();
         playAudio();
     }, [messages]);
+    
     const playAudio = () => {
         if(!audioPlayer.current) return
-        audioPlayer?.current?.play();
+        if(messages && messages[messages?.length - 1].uid !== user.uid) audioPlayer?.current?.play();;
     }
     
     const sendMessage = async () => {
@@ -47,7 +48,6 @@ export const Chat = () => {
     if(loading){
         return <Loader />
     }
-    console.log(value.length)
     const sendMessageByEnter = (e:any) => {
         console.log(e.code === 'Enter' && e.shiftKey)
         if(e.code === 'Enter' && e.shiftKey) {
@@ -62,6 +62,12 @@ export const Chat = () => {
         // setValue('\n')
         // console.log(value)
     }
+    // const qwer = (id: string, currID: string) =>{
+    //     console.log(messages)
+    //     // if(id === currID) return
+    //     // playAudio();
+    //     return <audio ref={audioPlayer} src={meloboom}/>
+    // }
   return (
     <div style={{margin: '0 auto'}}
         onKeyPress={sendMessageByEnter}
@@ -74,7 +80,6 @@ export const Chat = () => {
             width: '100%'
         }}
         >
-
             <span>Показано {`${messages && messages.length >= 60 ? Math.floor(messages.length / 2) : messages?.length}`} сообщения</span>
             {
                 messages ? messages.map(({uid, name, photoURL, text, createdAt})=>{
@@ -90,10 +95,12 @@ export const Chat = () => {
                             borderRadius: '20px',
                             boxShadow: 'rgb(0 0 0 / 24%) 0px 7px 29px 0px'
                         }}>
+                            <audio ref={audioPlayer} src={meloboom}/>
                             <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                                 <img style={{width: '30px', borderRadius: '50%'}} src={photoURL} alt="" />
                                 <div>{name}</div>
-                                {uid !== user.uid ? <audio ref={audioPlayer} src={meloboom}/> : null}
+                                {/* {qwer(uid, user.uid)} */}
+                                {/* {uid !== user.uid && qwer(uid, user.uid)} */}
                             </div>
                             <span style={{padding: '2px 0', display: 'block'}} ref={text === messages[messages.length - 1].text ? messagesEndRef : null}>{text}</span> 
                             <div>{createdAt && moment(createdAt.seconds*1000).format('LTS')}</div>
