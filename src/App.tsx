@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { BrowserRouter } from 'react-router-dom';
 import { AppRouter } from './components/AppRouter';
@@ -6,7 +6,6 @@ import { Loader } from './components/Loader';
 import { NavBar } from './components/NavBar';
 import { Context } from './utils/Context';
 import firebase from 'firebase/app';
-import { Users } from './components/Users';
 
 function App() {
 
@@ -22,7 +21,7 @@ function App() {
       )
       }
   }, [user])
-
+  
   if(loading){
     return <Loader/>
   }
@@ -31,7 +30,7 @@ function App() {
     <BrowserRouter>
       <NavBar/>
       <AppRouter/>
-      {/* <Users /> */}
+     
     </BrowserRouter>
   );
 }

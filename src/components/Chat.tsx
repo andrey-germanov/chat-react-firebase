@@ -5,10 +5,16 @@ import { Context } from '../utils/Context';
 import { Loader } from './Loader';
 import firebase from 'firebase';
 import moment from 'moment';
-import { Button, Input } from 'antd';
+import { Button,  } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import meloboom from '../voice notification/meloboom.mp3';
+import Picker, { IEmojiData } from 'emoji-picker-react';
+import emojiIcon from './emoji.png';
 
+interface IValue {
+    value: string;
+    emoji: string;
+}
 export const Chat = () => {
     const {auth, firestore} = useContext(Context);
     const [user]:any = useAuthState(auth);
@@ -16,6 +22,13 @@ export const Chat = () => {
     const messagesEndRef = useRef<null | HTMLElement>(null);
     const [messages, loading] = useCollectionData(firestore.collection('messages').orderBy('createdAt'));
     const audioPlayer = useRef<HTMLAudioElement>(null);
+    const [chosenEmoji, setChosenEmoji] = useState<IEmojiData | null>(null);
+    const [showEmoji, setShowEmoji] = useState(false)
+
+    const onEmojiClick = (event: React.MouseEvent, data: IEmojiData) => {
+      setChosenEmoji({...chosenEmoji, ...data});
+      
+    };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,7 +38,11 @@ export const Chat = () => {
         scrollToBottom();
         playAudio();
     }, [messages]);
-    
+
+    useEffect(()=>{
+        if (value || chosenEmoji?.emoji) setValue(value + chosenEmoji?.emoji)
+    }, [chosenEmoji]);
+
     const playAudio = () => {
         if(!audioPlayer.current) return
         if(messages && messages[messages?.length - 1].uid !== user.uid) audioPlayer?.current?.play();;
@@ -35,13 +52,13 @@ export const Chat = () => {
         if(value.length <=1) return
         firestore.collection('messages').add({
             uid: user.uid,
-            // id: user.uid + '1',
             name: user.displayName,
             photoURL: user.photoURL,
             text: value,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         })
         setValue('');
+        setChosenEmoji(null);
         scrollToBottom();
     }
     
@@ -50,24 +67,16 @@ export const Chat = () => {
     }
     const sendMessageByEnter = (e:any) => {
         console.log(e.code === 'Enter' && e.shiftKey)
-        if(e.code === 'Enter' && e.shiftKey) {
-            setValue('\n')
-        }
-        if(e.code === 'Enter'){
+        if(e.code === 'Enter' && e.shiftKey) {setValue(prev => `${prev}\n`) }
+        if(e.code === 'Enter' && !e.shiftKey){
             e.preventDefault();
             sendMessage();
         }
-
-        // setValue('');
-        // setValue('\n')
-        // console.log(value)
     }
-    // const qwer = (id: string, currID: string) =>{
-    //     console.log(messages)
-    //     // if(id === currID) return
-    //     // playAudio();
-    //     return <audio ref={audioPlayer} src={meloboom}/>
-    // }
+    const setValueInput = (e: React.ChangeEvent<HTMLTextAreaElement>) =>{
+        // const value = 
+        setValue(e.target.value)
+    }
   return (
     <div style={{margin: '0 auto'}}
         onKeyPress={sendMessageByEnter}
@@ -75,7 +84,7 @@ export const Chat = () => {
         <div style={{
             background: '#e6e1e1',
             height: '500px',
-            overflow: 'scroll',
+            overflowY: 'scroll',
             padding: '0 10px',
             width: '100%'
         }}
@@ -96,12 +105,12 @@ export const Chat = () => {
                             boxShadow: 'rgb(0 0 0 / 24%) 0px 7px 29px 0px'
                         }}>
                             <audio ref={audioPlayer} src={meloboom}/>
-                            <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                            {
+                                messages[messages.length - 1].uid !== uid ? <></> : <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                                 <img style={{width: '30px', borderRadius: '50%'}} src={photoURL} alt="" />
                                 <div>{name}</div>
-                                {/* {qwer(uid, user.uid)} */}
-                                {/* {uid !== user.uid && qwer(uid, user.uid)} */}
                             </div>
+                            }
                             <span style={{padding: '2px 0', display: 'block'}} ref={text === messages[messages.length - 1].text ? messagesEndRef : null}>{text}</span> 
                             <div>{createdAt && moment(createdAt.seconds*1000).format('LTS')}</div>
                         </div>
@@ -111,13 +120,57 @@ export const Chat = () => {
                 <div>write something</div>
             }
         </div>
-        <div style={{padding: '10px', width: '100%'}}>
+        <div style={{padding: '10px', width: '100%', position: 'relative'}}>
+            <span
+                style={{
+                    display: 'flex',
+                    justifyContent: 'end',
+                    paddingBottom: '10px',
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    top: '20px',
+                    right: '20px',
+                    zIndex:'2'
+                }}
+                onClick={()=>setShowEmoji(!showEmoji)}
+            >
+                <img width={30} src={emojiIcon} alt="" />
+            {
+                showEmoji && 
+                <div style={{
+                        position: 'absolute',
+                        right: '0',
+                        top: '30px',
+                        zIndex: '2'
+                    }}
+                >
+                    <Picker
+                        preload={true}
+                        disableSearchBar={true}
+                        disableAutoFocus={true}
+                        onEmojiClick={onEmojiClick}
+                    />
+                </div>
+            }
+            </span>
+            {/* <Users /> */}
             <TextArea
                 value={value}
-                onChange={(e)=>setValue(e.target.value)}
+                onChange={(e)=>setValueInput(e)}
                 rows={2} placeholder="Write something"    
             />
-            <Button style={{margin: '10px auto', display: 'block', width: '200px'}} type='primary' htmlType='submit' onClick={sendMessage}>Send Message</Button>
+            <Button
+                style={{
+                    margin: '10px auto',
+                    display: 'block',
+                    width: '200px'
+                }}
+                type='primary'
+                htmlType='submit'
+                onClick={sendMessage}
+            >
+                Send Message
+            </Button>
         </div>
     </div>
   )
